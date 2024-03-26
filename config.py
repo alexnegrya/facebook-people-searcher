@@ -13,4 +13,4 @@ args_parser.add_argument(
     "--gender", type=str, choices=("male", "female"), required=False
 )
 args_parser.add_argument("--country", type=str, required=False)
-args_parser.add_argument("--city", type=str, required=False)
+# args_parser.add_argument("--city", type=str, required=False) --- exists as criteria
