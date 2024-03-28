@@ -1,8 +1,8 @@
 from peewee import *
-from funcs import is_all_models_exist
+from .funcs import is_all_models_exist, get_class_name_in_snake_case
 
 
-_DB = SqliteDatabase('base.db')
+_DB = SqliteDatabase('./base.db')
 
 
 class _BaseModel(Model):
@@ -38,7 +38,7 @@ ALL_MODELS = (BrowserElementPositions, SidePosition, ElementPositions, SearchCri
 
 _models_existance_checked = False
 if not _models_existance_checked:
-    if not is_all_models_exist('side_positions', 'element_position'):
-        with _DB.connect():
-            _DB.create_tables(ALL_MODELS)
+    if not is_all_models_exist(ALL_MODELS):
+        _DB.connect()
+        _DB.create_tables(ALL_MODELS)
     _models_existance_checked = True
