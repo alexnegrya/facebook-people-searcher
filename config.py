@@ -1,6 +1,5 @@
 # from aiofb import GraphAPI
 from dotenv import load_dotenv
-import os
 import argparse
 
 
@@ -13,4 +12,9 @@ args_parser.add_argument(
     "--gender", type=str, choices=("male", "female"), required=False
 )
 args_parser.add_argument("--country", type=str, required=False)
-# args_parser.add_argument("--city", type=str, required=False) --- exists as criteria
+# add relationship criteria argument and functional
+# add languages criteria argument and functional
+# add reset app database argument and functional
+
+
+SEARCH_CRITERIA = ('friends', 'city', 'education', 'work')
