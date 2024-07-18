@@ -16,18 +16,18 @@ class PeopleSearcher:
         self.letter_index = 0
         self.previous_user_url = None
 
-    def __click_elem(self, model, name: str):
+    def click_elem(self, model, name: str):
         elem = model.get(name=name)
         mouse.move(elem.x_pos, elem.y_pos)
         mouse.press()
 
-    def __enter_text(self, text: str, with_choices=True):
+    def __enter_text(self, text: str, with_choices=False):
         text_spl = text.split()
         for char in text_spl:
             if char.isupper():
                 press_keys(('shift', char))
             elif char.isspace():
-                press_keys('backspace')
+                press_keys('space')
             else:
                 press_keys(char)
         if with_choices:
@@ -38,28 +38,33 @@ class PeopleSearcher:
         criteria = {m.name: m.value for m in [
             SearchCriteria.get(name=name) for name in SEARCH_CRITERIA]}
         if any([v is not None for v in criteria.values()]):
-            self.__click_elem(ElementPositions, 'people')
+            self.click_elem(ElementPositions, 'people')
             if criteria['friends']:
-                self.__click_elem(ElementPositions, 'friends')
+                self.click_elem(ElementPositions, 'friends')
                 if criteria['friends'] == 'my friends':
                     press_keys('down', 2)
                 elif criteria['friends'] == 'friends of friends':
                     press_keys('down', 3)
                 else:
-                    self.__enter_text(criteria['friends'])
+                    self.__enter_text(criteria['friends'], with_choices=True)
             for c in SEARCH_CRITERIA[1:]:
                 if c:
-                    self.__click_elem(ElementPositions, c)
-                    self.__enter_text(criteria[c])
+                    self.click_elem(ElementPositions, c)
+                    self.__enter_text(criteria[c], with_choices=True)
     
     def __update_users_by_current_letter(self):
         # search users by current letter
         self.letter_index += 1
 
-    def __get_user_url(self):
-        self.__click_elem(BrowserElementPositions, 'address_bar')
+    def get_current_url(self):
+        self.click_elem(BrowserElementPositions, 'address_bar')
         press_keys(('ctrl', 'c'))
         return pyperclip.paste()
+    
+    def set_url(self, url: str):
+        self.click_elem(BrowserElementPositions, 'address_bar')
+        press_keys('backspace')
+        self.__enter_text(url)
 
     def __scroll_results_list(self):
         pass
@@ -91,9 +96,9 @@ class PeopleSearcher:
                 self.__update_users_by_current_letter()
             while True:
                 # work with users one by one
-                url = self.__get_user_url()
+                url = self.get_current_url()
                 if url != self.previous_user_url:
-                    self.__click_elem(ElementPositions, 'person_name')
+                    self.click_elem(ElementPositions, 'person_name')
                     age = self.__get_user_age()
                     gender = self.__get_user_gender()
                     country = self.__get_user_country()

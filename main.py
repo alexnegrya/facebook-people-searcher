@@ -49,12 +49,18 @@ in which people you searching were learned')
 
     input('Open following link from browser in which you are logged in to your \
 Facebook account - https://www.facebook.com/search/people/?q=a > ')
-    if all([len(m.select()) == 0 for m in (SidePosition, ElementPositions)]):
+
+    if len(SidePosition.select()) == 0:
         input('Put your cursor on the up side of the Facebook website in tab with \
 opened link in your browser > ')
         save_side_position('upper')
         input('Put your cursor on the down side of the same Facebook website page > ')
         save_side_position('bottom')
+    
+    args = args_parser.parse_args()
+    searcher = PeopleSearcher()
+
+    if len(ElementPositions.select()) == 0:
         input('Put your cursor on the center of the Facebook`s search input > ')
         save_element_positions(ElementPositions, 'search')
         [set_button_positions(name) for name in (
@@ -63,9 +69,12 @@ opened link in your browser > ')
 the Facebook`s search result > ')
         save_element_positions(ElementPositions, 'person_name')
 
-    # open first user page and save user data elements positions like in previous block of code
 
-    args = args_parser.parse_args()
-    searcher = PeopleSearcher()
+        # open first user page and save user data elements positions like in previous block of code
+        searcher.click_elem(ElementPositions, 'person_name')
+        user_page_url = searcher.get_current_url()
+
+        # save positions of elements in the user page for args
+
     users = searcher.search_users(**args)
     # print(users)
